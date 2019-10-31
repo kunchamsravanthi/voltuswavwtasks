@@ -1,0 +1,119 @@
+ <!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>websockets 101</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
+    <style>
+      * { margin: 9px; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 1px; position: fixed; bottom: 0; width: 80%; }
+      form input { border: 0; padding: 10px; width: 50%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+</head>
+<body>
+    <!-- <h1>voltuswave</h1>  -->
+    <!-- <form>
+   <div id="mario-chat">
+        <div id="chat-window">
+            <div id="output">
+
+            </div>
+            <div id="feedback"></div>
+            <input id="handle" type="text"placeholder="Handle"/>
+            <input id="message" type="text" placeholder="Message"/></br>
+            <button id="send">Send</button>
+        </div>
+    </div></form>
+    <script src="/chat.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script> -->
+ <!-- <script>
+  $(function () {
+    var socket = io();
+    $('form').submit(function(e){
+      e.preventDefault(); // prevents page reloading
+      socket.emit('chat message', $('#m').val());
+      $('#m').val('');
+      return false;
+    });
+  }); 
+</script> -->
+<!-- <script> 
+    $(function () {
+      var socket = io();
+      $('form').submit(function(e){
+        e.preventDefault(); // prevents page reloading
+        socket.emit('chat message', $('#messages').val());
+        $('#messages').val('');
+        return false;
+      });
+      socket.on('chat message', function(msg){
+        $('#messages').append($('<li>').text(msg));
+      });
+    });
+  </script>  
+  </body> -->
+<!-- </html>   -->
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+        <h3>Hello world</h3>
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      $(function () {
+        var socket = io();
+        $('form').submit(function(e){
+          e.preventDefault(); // prevents page reloading
+          socket.emit('chat message', $('#m').val());
+          $('#m').val('');
+          return false;
+        });
+        socket.on('chat message', function(msg){
+      $('#messages').append($('<li>').text(msg));
+    });
+  });
+    </script>
+                                        <!-- <script>
+                                          var socket = io();
+                                          socket.on('broadcast',function(data) {
+                                            document.body.innerHTML = '';
+                                            document.write(data.description);
+                                          });
+                                        </script>   -->
+                                        <!-- <script>
+                                          var socket = io();
+                                          socket.on('newclientconnect',function(data) {
+                                            document.body.innerHTML = '';
+                                            document.write(data.descripition);
+                                          });
+                                        </script> -->
+
+
+
+  </body>
+</html>
