@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  traefik:
+    image: traefik:latest # The official Traefik docker image
+    command: --api --docker # Enables the web UI and tells Traefik to listen to docker
+    ports:
+      - "80:80"     # The HTTP port
+      - "8080:8080" # The Web UI (enabled by --api)
+    volumes:
+        # - </Home/user/Desktop/app></Home/user/Desktop/docker.app>
+        # -/Home/run/app:/Home/user/Downloads/docker.app
+       - /var/run/docker.sock:/var/run/docker.sock/ # So that Traefik can listen to the Docker events
+    restart: always
+
+
+  service:
+    build: .
+    environment:
+      - MY_MESSAGE= "load1"
+    labels:
+      - traefik.frontend.rule:"Host:load.test"
+      - traefik.backend:"load"
+  service:
+    build: .
+    environment:
+      - MY_MESSAGE= "load2"
+    labels:
+      - traefik.frontend.rule:"Host:load.test"
+      - traefik.backend:"load"
