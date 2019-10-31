@@ -1,0 +1,39 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script type="text/javascript">
+        $(function(){				
+            $('#select_link').click(function(e){
+                e.preventDefault();
+                console.log('select_link clicked');
+    
+                var data = {};
+                data.title = "title";
+                data.message = "message";
+                
+                $.ajax({
+                    type: 'GET',
+                    data: JSON.stringify(body),
+                    contentType: 'application/json',
+                    url: 'http://localhost:3000/users',						
+                    success: function(data) {
+                        console.log('success');
+                        console.log(data);
+                    }
+                });
+    
+               
+            });				
+        });
+       
+    </script> 
+</body>
+</html>

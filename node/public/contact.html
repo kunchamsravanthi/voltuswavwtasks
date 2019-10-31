@@ -1,0 +1,221 @@
+<html>
+
+<head>
+    <title>Sample Page</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    // function validation(){
+        // $(function(){				
+            // $('#select_link').click(function(e){
+            //     e.preventDefault();
+            //     console.log('select_link clicked');
+
+            //     var data = {};
+            //     data.title = "title";
+            //     data.message = "message";
+            //     data.firstname =  $('')
+            //     $.ajax({
+            //         type: 'POST',
+            //         data: JSON.stringify(data),
+            //         contentType: 'application/json',
+            //         url: 'http://localhost:3000/users',						
+            //         success: function(data) {
+            //             console.log('success');
+            //             console.log(data);
+            //         }
+            //     });
+
+
+            // });				
+        // });
+    // };
+    </script>
+     <style>
+           #tbl1, th,
+            td
+          
+            {
+                font: 14px Verdana;
+            }
+    
+            table,
+            th,
+            td {
+                border: solid 1px #DDD;
+                border-collapse: collapse;
+                padding: 2px 3px;
+                text-align: center;
+            }
+    
+            th {
+                font-weight: bold;
+            }
+        </style>
+</head>
+
+<body>
+    <div className="center">
+        <div id="register">
+            <h1>Register</h1>
+          
+            <!-- <form method="post" action="/">
+                <input type="radio" value="male" name="male">
+                <label for="male">male</label>
+                <input type="radio" value="female" name="female">
+                <label for="female">female</label>
+                <button type="submit">Enter</button>
+              </form> -->
+            <form>
+ 
+                <input className="form-item" type="text" placeholder="enter your first name" id="fname"
+                    name="firstname" /><br>
+                <span id="fname_error"></span><br>
+                <input className="form-item" type="text" placeholder="enter your last name" id="lname"
+                    name="lastname" /><br>
+                <span id="lname_error"></span><br>
+                <input className="form-item" type="text" placeholder="enter your email" id="emailid" name="email" /><br>
+                <span id="emailid_error"></span><br>
+                <input className="form-item" type="password" placeholder="password" id="pass" name="password" /><br>
+                <span id="pass_error"></span><br>
+
+            </form> 
+            <button className="form-group" id="select_link" onclick="validate()">submit</button>
+            <br>
+        </div>
+
+        <!-- <div id="tablelist">
+            <table id="tbl1">
+                <tr>
+                    <th>firstname</th>
+                    <th>lastname</th>
+                    <th>email</th>
+                    <th>password</th>
+                </tr>
+            </table>
+        </div> -->
+
+    </div>
+    <!-- <script type="text/javascript">
+        function getPathFromUrl(url) {
+            return url.split(/[?#]/)[0];
+        }
+        function validate() {
+
+            var errorStatus = 0;
+            var name = document.getElementById("fname").value;
+            //alert(firstname);
+            if (name == "") {
+                document.getElementById("fname_error").innerHTML = "please enter your firstname";
+                document.getElementById("fname_error").style.color = "#f00";
+                var errorStatus = 1;
+            } else if (name.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+                document.getElementById("fname_error").innerHTML = "";
+            } else {
+                document.getElementById("fname_error").innerHTML = "please enter your valid name";
+                document.getElementById("fname_error").style.color = "#f00";
+                var errorStatus = 1;
+            }
+
+
+            var lastname = document.getElementById("lname").value;
+            if (lastname == "") {
+                document.getElementById("lname_error").innerHTML = "please enter your lastname";
+                document.getElementById("lname_error").style.color = "#f00";
+                var errorStatus = 1;
+            } else if (lastname.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+                document.getElementById("lname_error").innerHTML = "";
+            } else {
+                document.getElementById("lname_error").innerHTML = "please enter your valid name";
+                document.getElementById("lname_error").style.color = "#f00";
+                var errorStatus = 1;
+            }
+
+            //alert(lastname);
+
+            var emailid = document.getElementById("emailid").value;
+            if (emailid == "") {
+                document.getElementById("emailid_error").innerHTML = "please enter your emailid";
+                document.getElementById("emailid_error").style.color = "#f00";
+                var errorStatus = 0;
+                errorStatus = 1;
+            } else if (emailid.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                document.getElementById("emailid_error").innerHTML = "";
+            } else {
+                document.getElementById("emailid_error").innerHTML = "please enter a valid emailId";
+                document.getElementById("emailid_error").style.color = "#f00";
+                var errorStatus = 0;
+                errorStatus = 1;
+
+            }
+            // var password = document.getElementById("pass").value;
+            // if (password == "") {
+            //     document.getElementById("pass_error").innerHTML = "please enter your password";
+            //     document.getElementById("pass_error").style.color = "#f00";
+            //     var errorStatus = 0;
+            //     errorStatus = 1;
+            // } else if (password.match(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/)) {
+            //     document.getElementById("pass_error").innerHTML = "";
+            // } else {
+            //     document.getElementById("pass_error").innerHTML = "please enter a valid password";
+            //     document.getElementById("pass_error").style.color = "#f00";
+            //     var errorStatus = 0;
+            //     errorStatus = 1;
+
+            // }
+            if (errorStatus == 1) {
+                return false;
+            } else {
+
+                // window.location.href = "./index.html";
+                var data = {};
+                data.title = "title";
+                data.message = "message";
+                data.firstname = $('#fname').val()
+                data.lastname = $('#lname').val()
+                data.email = $('#emailid').val()
+                data.password = $('#pass').val()
+
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: 'http://localhost:4041/users',
+                    success: function (res) {
+                        console.log('success');
+                        // document.write("#register" ,style="display:hidden;")
+                        // document.write("#tablelist" ,style="display:block;")
+                        console.log(JSON.stringify(res));
+                    //   document.write(`#register`, style="display:hidden");
+                    document.getElementById("register").style.display = "none";
+                    //   document.write(`#tablelist`, style="display:block");
+                    document.getElementById("tablelist").style.display = "block";
+                         $.each(res, function (req, value) {
+                            // e_data+='<tr>';
+                            // e_data+='<td>'+req.firstname+'</td>'
+                            // e_data+='<td>'+req.lastname+'</td>'
+                            // e_data+='<td>'+req.email+'</td>'
+                            // // e_data+='<td>'+req.password+'</td>'
+                            // var row = $(document.createElement('tr'));
+                            // var fname = $(document.createElement('td'));
+                            // var lname = $(document.createElement('td'));
+                            // var emailid = $(document.createElement('td'));
+                            // var pswd = $(document.createElement('td'));
+                            // fname.innerHTML = value.firstname
+                            // lname.innerHTML = value.lastname
+                            // emailid.innerHTML = value.emailid
+                            // pswd.innerHTML = value.password
+                            // row.append('fname')
+                            // row.append('lname')
+                            // row.append('emailid')
+                            // row.append('pswd')
+                            // $('#tbl1').append(`<tr><td>${value.firstname}</td><td>${value.lastname}</td><td>${value.emailid}</td><td>${value.password}</td></tr>`)
+                        })
+                    }
+                });
+
+            }
+        }
+    </script> -->
+</body>
+
+</html>

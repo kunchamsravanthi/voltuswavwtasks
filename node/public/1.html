@@ -1,0 +1,326 @@
+<html>
+
+<head>
+    <title>Sample Page</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript">
+    // function validation(){
+        // $(function(){				
+            // $('#select_link').click(function(e){
+            //     e.preventDefault();
+            //     console.log('select_link clicked');
+
+            //     var data = {};
+            //     data.title = "title";
+            //     data.message = "message";
+            //     data.firstname =  $('')
+            //     $.ajax({
+            //         type: 'POST',
+            //         data: JSON.stringify(data),
+            //         contentType: 'application/json',
+            //         url: 'http://localhost:3000/users',						
+            //         success: function(data) {
+            //             console.log('success');
+            //             console.log(data);
+            //         }
+            //     });
+
+
+            // });				
+        // });
+    // };
+    </script>
+     <style>
+           #tbl1, th,
+            td
+          
+            {
+                font: 14px Verdana;
+            }
+    
+            table,
+            th,
+            td {
+                border: solid 1px #DDD;
+                border-collapse: collapse;
+                padding: 2px 3px;
+                text-align: center;
+            }
+    
+            th {
+                font-weight: bold;
+            }
+        </style>
+</head>
+
+<body>
+    <div className="center">
+        <div id="register">
+            <h1>Register</h1>
+            <form>
+
+                <input className="form-item" type="text" placeholder="enter your first name" id="fname"
+                    name="firstname" /><br>
+                <span id="fname_error"></span><br>
+                <input className="form-item" type="text" placeholder="enter your last name" id="lname"
+                    name="lastname" /><br>
+                <span id="lname_error"></span><br>
+                <input className="form-item" type="text" placeholder="enter your email" id="emailid" name="email" /><br>
+                <span id="emailid_error"></span><br>
+                <input className="form-item" type="password" placeholder="password" id="pass" name="password" /><br>
+                <span id="pass_error"></span><br>
+
+            </form>
+            <button className="form-group" id="select_link" onclick="validate()">submit</button>
+            <br>
+        </div>
+
+        <div id="tablelist">
+            <table id="tbl1">
+                <tr>
+                    <th>firstname</th>
+                    <th>lastname</th>
+                    <th>email</th>
+                    <th>password</th>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <script type="text/javascript">
+        function getPathFromUrl(url) {
+            return url.split(/[?#]/)[0];
+        }
+        function validate() {
+
+            var errorStatus = 0;
+            var name = document.getElementById("fname").value;
+            //alert(firstname);
+            if (name == "") {
+                document.getElementById("fname_error").innerHTML = "please enter your firstname";
+                document.getElementById("fname_error").style.color = "#f00";
+                var errorStatus = 1;
+            } else if (name.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+                document.getElementById("fname_error").innerHTML = "";
+            } else {
+                document.getElementById("fname_error").innerHTML = "please enter your valid name";
+                document.getElementById("fname_error").style.color = "#f00";
+                var errorStatus = 1;
+            }
+
+
+            var lastname = document.getElementById("lname").value;
+            if (lastname == "") {
+                document.getElementById("lname_error").innerHTML = "please enter your lastname";
+                document.getElementById("lname_error").style.color = "#f00";
+                var errorStatus = 1;
+            } else if (lastname.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
+                document.getElementById("lname_error").innerHTML = "";
+            } else {
+                document.getElementById("lname_error").innerHTML = "please enter your valid name";
+                document.getElementById("lname_error").style.color = "#f00";
+                var errorStatus = 1;
+            }
+
+            //alert(lastname);
+
+            var emailid = document.getElementById("emailid").value;
+            if (emailid == "") {
+                document.getElementById("emailid_error").innerHTML = "please enter your emailid";
+                document.getElementById("emailid_error").style.color = "#f00";
+                var errorStatus = 0;
+                errorStatus = 1;
+            } else if (emailid.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                document.getElementById("emailid_error").innerHTML = "";
+            } else {
+                document.getElementById("emailid_error").innerHTML = "please enter a valid emailId";
+                document.getElementById("emailid_error").style.color = "#f00";
+                var errorStatus = 0;
+                errorStatus = 1;
+
+            }
+            // var password = document.getElementById("pass").value;
+            // if (password == "") {
+            //     document.getElementById("pass_error").innerHTML = "please enter your password";
+            //     document.getElementById("pass_error").style.color = "#f00";
+            //     var errorStatus = 0;
+            //     errorStatus = 1;
+            // } else if (password.match(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/)) {
+            //     document.getElementById("pass_error").innerHTML = "";
+            // } else {
+            //     document.getElementById("pass_error").innerHTML = "please enter a valid password";
+            //     document.getElementById("pass_error").style.color = "#f00";
+            //     var errorStatus = 0;
+            //     errorStatus = 1;
+
+            // }
+            if (errorStatus == 1) {
+                return false;
+            } else {
+
+                // window.location.href = "./index.html";
+                var data = {};
+                data.title = "title";
+                data.message = "message";
+                data.firstname = $('#fname').val()
+                data.lastname = $('#lname').val()
+                data.email = $('#emailid').val()
+                data.password = $('#pass').val()
+
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    url: 'http://localhost:4041/users',
+                    success: function (res) {
+                        console.log('success');
+                        // document.write("#register" ,style="display:hidden;")
+                        // document.write("#tablelist" ,style="display:block;")
+                        console.log(JSON.stringify(res));
+                    //   document.write(`#register`, style="display:hidden");
+                    document.getElementById("register").style.display = "none";
+                    //   document.write(`#tablelist`, style="display:block");
+                    document.getElementById("tablelist").style.display = "block";
+                         $.each(res, function (req, value) {
+                            // e_data+='<tr>';
+                            // e_data+='<td>'+req.firstname+'</td>'
+                            // e_data+='<td>'+req.lastname+'</td>'
+                            // e_data+='<td>'+req.email+'</td>'
+                            // // e_data+='<td>'+req.password+'</td>'
+                            // var row = $(document.createElement('tr'));
+                            // var fname = $(document.createElement('td'));
+                            // var lname = $(document.createElement('td'));
+                            // var emailid = $(document.createElement('td'));
+                            // var pswd = $(document.createElement('td'));
+                            // fname.innerHTML = value.firstname
+                            // lname.innerHTML = value.lastname
+                            // emailid.innerHTML = value.emailid
+                            // pswd.innerHTML = value.password
+                            // row.append('fname')
+                            // row.append('lname')
+                            // row.append('emailid')
+                            // row.append('pswd')
+                            // $('#tbl1').append(`<tr><td>${value.firstname}</td><td>${value.lastname}</td><td>${value.emailid}</td><td>${value.password}</td></tr>`)
+                        })
+                    }
+                });
+
+            }
+        }
+    </script>
+</body>
+
+</html>
+var express = require('express');
+var path = require('path');
+var fs = require('fs');
+var mysql = require('mysql');
+var con = mysql.createConnection({
+    host: '192.168.1.169',
+    user: 'vw-srv-0001',
+    password: 'Apple#123',
+    database: 'TestDB',
+    port: 6603
+});
+
+var bodyParser = require('body-parser');
+var app = express();
+app.use(bodyParser());
+// app.use('/res.json', express.static(__dirname + './pages'));
+
+app.get('/', function (req, res) {
+    res.sendFile('contact.html', { root: path.join(__dirname, './public') });
+});
+app.post('/users', function (req, res) {
+    var obj = {};
+    // console.log(req.body);
+    // res.send(req.body);
+
+    con.connect(function (err) {
+        if (!err) {
+            console.log("Database is connected ... nn");
+            // var sql = "INSERT INTO Users (firstname, lastname, emailid, password)  VALUES ('voltus', 'wave', 'abc@gmail.com','Apple#123')";
+            var sql = `INSERT INTO Users(firstname, lastname, emailid, password) VALUES('${req.body.firstname}', '${req.body.lastname}', '${req.body.email}', '${req.body.password}')`;
+            con.query(sql, function (err, result) {
+                if (err) { throw err; }
+
+                if (result) {
+                    console.log("1 record inserted");
+                    con.query("SELECT * FROM Users", function (err, result, fields) {
+                        // if any error while executing above query, throw error
+                        if (err) throw err;
+                        // if there is no error, you have the result
+                        console.log(result);
+                        res.send(result);
+                        res.redirect('/index');
+                    })
+                }
+
+            });
+        } else {
+            console.log("Error connecting database ... nn", err);
+        }
+    });
+    console.log(req.body);
+    //     //   res.end(JSON.stringify(req.body));
+
+});
+// app.get('/userslist', function (req, res) {
+//     // res.sendFile('contact.html', { root: path.join(__dirname, './public') });
+//     con.query("SELECT * FROM Users", function (err, result, fields) {
+//         // if any error while executing above query, throw error
+//         if (err) throw err;
+//         // if there is no error, you have the result
+//         console.log(result);
+//         res.send(result);
+//         res.redirect('/userslist');
+
+//     })
+// });
+app.listen(4041, function () {
+    console.log('listening at port 4041/users');
+});
+
+
+//fetching data from database
+// var express = require('express');
+// var app = express();
+// var mysql = require('mysql');
+
+
+// var con = mysql.createConnection({
+//     host: '192.168.1.169',
+//     user: 'vw-srv-0001',
+//     password: 'Apple#123',
+//     database: 'TestDB',
+//     port: 6603
+// });
+
+// // con.connect();
+
+// app.get('/users', (req, res) => {
+//     res.sendFile(__dirname + "/");
+//     // var obj = {};
+//     //  console.log(req.body);
+//     //  res.send(req.body);
+
+//     // make to connection to the database.
+//     con.connect(function (err) {
+//         if (err) throw err;
+//         // if connection is successful
+//         con.query("SELECT * FROM Users", function (err, result, fields) {
+//             // if any error while executing above query, throw error
+//             if (err) throw err;
+//             // if there is no error, you have the result
+//             console.log(result);
+//             res.send(result);
+//             //   res.send(req.body);
+//         });
+//     });
+// });
+// app.listen(3002, function () {
+//     console.log('Connected to port 3002/users');
+// });
+
+
+
