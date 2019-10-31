@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+    <head>
+
+    </head>
+    <body>
+        <h1>Hello World!</h1>
+        <div id="future"></div>
+        <form id="form" id="chat_form">
+            <input id="firstname" type="text" placeholder="enter your firstname" name="firstname"> <br> <br>
+            <input id="lastname" type="text" placeholder="enter your lastname" name="lastname"> <br> <br>
+            <input id="emailid" type="text" placeholder="enter your email" name="emailid">
+            <br> <br><input id="password" type="password" placeholder="enter your password" name="password">
+            <br> <br> <input type="submit" value="Send">
+        </form>
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io.connect();
+            socket.on('connect', function(data) {
+               socket.emit('join', 'Hello  from client');
+            });
+            socket.on('broad', function(data) {
+                    $('#future').append(data+ "<br/>");
+              });
+           
+            $('form').submit(function(e){
+                e.preventDefault();
+                var firstname = $('#firstname').val();
+                var lastname= $('#lastname').val();
+                var emailid = $('#emailid').val();
+                var password= $('#password').val();
+                socket.emit('messages', firstname);
+                socket.emit('messages', lastname);
+                socket.emit('messages',emailid);
+                socket.emit('messages', password);
+
+            });
+           </script>
+    </body>
+</html>
