@@ -1,0 +1,26 @@
+
+<html>
+  <head><script type="text/javascript" src="ejs_production.js"></script>
+  </head>
+  <body>
+
+    <table>
+      <tr>
+        <th>firstname</th>
+        <th>lastname</th>
+        <th>emailid</th>
+        <th>password</th>
+      </tr>
+      <% for(var i=0; i < rows.length; i++) { %>
+        <tr>
+          <td><%= rows[i].firstname %></td>
+          <td><%= rows[i].lastname%></td>
+          <td><%= rows[i].email %></td>
+          <td><%=rows[i].password%></td>
+        </tr>
+        <% } %>
+</table>
+
+
+  </body>
+</html>
