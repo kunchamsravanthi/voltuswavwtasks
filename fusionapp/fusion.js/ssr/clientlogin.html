@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="Shortcut Icon" type="image/x-icon" href="" />
+    <title>Voltuswave</title>
+    <!-- <link rel="icon" href="./dist/icons/favIcon.png" type="image/x-icon"> -->
+    <script src="dist/client/scripts/jquery-2.1.4.min.js" crossorigin="anonymous"></script>
+    <script src="dist/client/scripts/knockout-3.4.0.js"></script>
+    <script src="dist/client/scripts/knockout.validations.js"></script>
+    <link href="dist/client/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="dist/client/css/login.css" rel="stylesheet" />
+    <script src="dist/client/scripts/bootstrap.min.js"></script>
+    <script src="dist/client/scripts/tripledes.js"></script>
+    <script src="dist/client/scripts/oauthio-web/dist/oauth.js"></script>
+    <script src="./code/libs/microphone-platfrom.js"></script>
+
+</head>
+
+<body>
+    <div class="mask"></div>
+    <img class="staticImage" data-bind="attr:{src: clientImage}" />
+    <video playsinline autoplay muted loop data-bind="html: clientBackground">
+        <!-- WCAG general accessibility recommendation is that media such as background video play through only once. Loop turned on for the purposes of illustration; if removed, the end of the video will fade in the same way created by pressing the "Pause" button  -->
+        <source class="videoSource" type="video/mp4">
+    </video>
+    <div class="joinWrap">
+        <div class="joinUsBoxFrame">
+            <div id="loginbox " class="form-signin item loginBox" data-bind="visible: showLogin()">
+                <div class="panel panel-info ">
+                    <div class="row loginLogo">
+                        <span class="logo">
+                            <img data-bind="attr:{src: clientLogo}" />
+                        </span>
+                        <span style="text-align: center" class="col-md-12" data-bind="html: welcomeTag, style: { color: welcomeTagColor }"></span>
+                    </div>
+                    <div class="panel-body mt-3">
+                        <span style="color: red" data-bind="text: errLoginMsg"></span>
+                        <form id="loginform" class="form-horizontal mt-2" role="form">
+                            <div class="col-md-12" data-bind="visible: false">
+                                <!-- <div class="col-md-12" data-bind="visible: isAuthriozation && enableSubDomainCode"> -->
+                                <label class="control-label" data-bind="text: userNameLabel">Sub-Domain Code</label>
+                                <div class="form-group">
+                                    <input type="text" class="form-control" data-bind="value: entitySubDomainCode"
+                                        placeholder="Sub Domain">
+                                    <span class="validationMessage" style="display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12" data-bind="visible: showUserNameField">
+
+                                <div class="form-group floatContol" data-bind="css: IsValidCss(loginUsername)">
+                                    <input type="text" class="form-control usernameControl"
+                                        data-bind="value: loginUsername" placeholder="">
+                                    <label class="floatUserNameLabel" data-bind="text: userNameLabel"></label>
+                                    <span class="validationMessage" style="display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="dropdown emailDrop" class="col-md-12"
+                                data-bind="visible: showPasswordField, click: useAnotherAccount">
+                                <button class="btn btn-default" type="button" data-toggle="dropdown">
+                                    <span class="iconUserName" data-bind="text: loginUsername"></span>
+                                </button>
+
+                            </div>
+                            <div class="col-md-12 mt-4" data-bind="visible: showPasswordField">
+
+                                <div class="form-group floatContol" data-bind="css: IsValidCss(loginPassword)">
+                                    <input type="password" class="form-control passwordControl"
+                                        data-bind="value: loginPassword, visible: hidePassword()">
+                                    <input type="text" class="form-control passwordControl"
+                                        data-bind="value: loginPassword, visible: !hidePassword()">
+                                    <label class="floatPasswordLabel">Password</label>
+                                    <div class="row" style="margin: 0;justify-content: flex-end;">
+                                        <span class="eyeIcon"
+                                            data-bind="text: hidePassword() ? 'Show Password':'Hide Password', click:showHidePassword"></span>
+                                    </div>
+                                    <span class="validationMessage" style="display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12" data-bind="if: showUserNameField">
+                                <div class="form-group" style="margin-bottom: 0">
+                                    <button id="btn-login" data-bind="click: VerifyUserEmail"
+                                        class="btn btn-primary btn-block">Next
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-12" data-bind="if: showPasswordField">
+                                <div class="form-group" style="margin-bottom: 0">
+                                    <button id="btn-login" data-bind="click: Login, text: loginBtnLabel"
+                                        class="btn btn-primary btn-block">Login
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group fgPw">
+                                    <div style="text-align: center; font-size: 14px; margin-top: 20px">
+                                        <a href="#" data-bind="click: forgotReset" style="margin-right: 15px">Forgot
+                                            Password ?</a>
+                                        <span class="pull-right" data-bind="if: orgJoinsAvailable"> <span
+                                                style="color: #8c8c8c; margin-right: 15px">|</span>
+                                            New User ? <a href="" data-bind="click: showSignUp">Sign Up</a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mt-5 mb-0">
+                                <div class="row rowMargin socialSignUp" style="justify-content: center; ">
+                                    <div class="" data-bind="if: GoogleEnabled">
+                                        <a href="#" data-bind="click: onGoogleLogin">
+                                            <img src="dist/client/css/images/icon-google.png" />
+                                        </a>
+                                    </div>
+                                    <div class="" data-bind="if: FacebookEnabled">
+                                        <a href="#" data-bind="click: onFacebookLogin">
+                                            <img src="dist/client/css/images/icon-fb.png" />
+                                        </a>
+                                    </div>
+                                    <div class="" data-bind="if: LinkedInEnabled">
+                                        <a href="#" data-bind="click: onLinkedInLogin">
+                                            <img src="dist/client/css/images/icon-linkedin.png" />
+                                        </a>
+                                    </div>
+                                    <div class="" data-bind="if: TwitterEnabled">
+                                        <a href="#" data-bind="click: onTwitterLogin">
+                                            <img src="dist/client/css/images/icon-twitter.png" />
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group fgPw">
+                                    <div style="text-align: center; font-size: 14px; margin-top: 20px">
+                                        <a href="#" data-bind="visible: showPasswordField, click: useAnotherAccount" style="margin-right: 15px">< Back</a>                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mt-5 mb-0">
+                                <div class="row rowMargin socialSignUp" style="justify-content: center; text-align: center; font-size: 14px; margin-top: 20px">
+                                    <div class="" data-bind="if: orgTermsUrlAvail">
+                                        <a target="_blank" data-bind="attr:{href : self.clientProfile.parentConfig.orgTermsUrl}">
+                                            Terms & Conditions
+                                        </a>
+                                    </div>
+                                    <div class="" data-bind="if: orgPrivacyPolicyUrlAvail">
+                                        <a target="_blank" data-bind="attr:{href : self.clientProfile.parentConfig.orgPrivacyPolicyUrl}">
+                                            Privacy Policy
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="stepWrap" style="display: none;">
+                <div class="cell widgetStep1" data-bind="click: showBasicDetails">
+                    <p class="step">
+                        <span class="num">1</span>
+                        <span class="icon"></span>
+                    </p>
+                </div>
+                <div class="cell widgetStep2" data-bind="click: showClientDetails">
+                    <p class="step">
+                        <span class="num">2</span>
+                        <span class="icon"></span>
+                    </p>
+                </div>
+                <div class="cell widgetStep3" data-bind="click: showLoginDetails">
+                    <p class="step">
+                        <span class="num">3</span>
+                        <span class="icon"></span>
+                    </p>
+                </div>
+            </div>           
+
+            <div class="form-signin item" data-bind="visible: showForgotPasswd()" style="display: none;">
+                <div class="panel panel-info ">
+                    <div class="row loginLogo">
+                        <span class="logo">
+                            <img data-bind="attr:{src: clientLogo}" />
+                        </span>
+                        <p class="col-md-12" data-bind="html: welcomeTag, style: { color: welcomeTagColor }"></p>
+                    </div>
+                    <div class="panel-body">
+
+                        <span data-bind="css: activateMsgCss, visible: showActivateMsg, text: activateMsg"></span>
+                        <form id="loginform" class="form-horizontal " role="form" data-bind="visible: showforgotFields()" style="display: none;">
+                            <div class="col-md-12">
+                                <div className="form-group radChk">
+                                    <label>
+                                        <input type="radio" name="options" autoComplete="off" value="email" data-bind="checked: forgotType" />
+                                        E-mail
+                                    </label>
+                                    <label>
+                                        <input type="radio" name="options" autoComplete="off" value="mobile" data-bind="checked: forgotType"/>
+                                        Mobile
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group floatContol" data-bind="css: IsValidCss(forgotUsername), visible: forgotType() == 'email'">
+                                    <input type="text" class="form-control usernameControl"
+                                        data-bind="value: forgotUsername" placeholder="E-mail">
+                                    <!-- <label class="floatUserNameLabel">User Name</label> -->
+                                    <span class="validationMessage" style="display: none;"></span>
+                                </div>
+                                <div class="form-group floatContol" data-bind="css: IsValidCss(forgotUserMobileNumber), visible: forgotType() == 'mobile'">
+                                    <input type="text" class="form-control usernameControl"
+                                        data-bind="value: forgotUserMobileNumber" placeholder="Mobile Number">
+                                    <!-- <label class="floatUserNameLabel">User Name</label> -->
+                                    <span class="validationMessage" style="display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button id="btn-login" data-bind="click: function(){ VerifyUserEmail('reset');}"
+                                        class="btn btn-primary btn-block">Reset Password</button>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group backToLogin">
+                                    <a href="" data-bind="click: showLoginPage"> <svg style="    margin: 6px 0 -6px;"
+                                            fill="currentColor" height="24" icon="" viewBox="0 0 24 24" width="24"
+                                            xmlns="http://www.w3.org/2000/svg" class="_ngcontent-lac-0">
+                                            <path d="M10 12l6-6-1-1-6.5 6.5-.5.5 7 7 1-1-6-6z" fill-rule="evenodd"
+                                                class="_ngcontent-lac-0"></path>
+                                        </svg> Back to login</a>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form id="verifyOtpform" class="form-horizontal" role="form" data-bind="visible: showVerifyPasswd()" style="display: none;"> 
+                            <div class="col-md-12">
+                                <!--<label>Verify Password</label>-->
+                            </div>
+                            <div class="col-md-12">
+                                <label class="control-label">Enter OTP</label>
+                                <div class="form-group" data-bind="">
+                                    <input type="text" class="form-control" data-bind="value: mobileOtp"
+                                        placeholder="OTP">
+                                    <span class="validationMessage" style="display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12" data-bind="if: otpSent">
+                                <div class="form-group" style="text-align: right">
+                                    <span id="forgotpasswordTimer"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12" data-bind="if: otpTimeExpired">
+                                <div class="form-group">
+                                    <span>OTP not yet received ? 
+                                        <a href="" data-bind="click: PasswordReset">Resend OTP</a>
+                                    </span>                                    
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button id="btn-login" data-bind="click: verifyOTP"
+                                        class="btn btn-primary btn-block ">Verify OTP</button>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group backToLogin">
+                                    <a href="" data-bind="click: showLoginPage"> <svg style="    margin: 6px 0 -6px;"
+                                            fill="currentColor" height="24" icon="" viewBox="0 0 24 24" width="24"
+                                            xmlns="http://www.w3.org/2000/svg" class="_ngcontent-lac-0">
+                                            <path d="M10 12l6-6-1-1-6.5 6.5-.5.5 7 7 1-1-6-6z" fill-rule="evenodd"
+                                                class="_ngcontent-lac-0"></path>
+                                        </svg> Back to login</a>
+                                </div>
+                            </div>
+                        </form>
+
+                        <form id="changePasswordform" class="form-horizontal" role="form" data-bind="visible: showChangePasswd()" style="display: none;"> 
+                            <div class="col-md-12">
+                                <!--<label>Verify Password</label>-->
+                            </div>
+                            <div class="col-md-12">
+                                <label>Password</label>
+                                <div class="form-group">
+                                    <input type="password" data-bind='value: changePassword' class="form-control" placeholder="Password">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label>Password</label>
+                                <div class="form-group">
+                                    <input type="password" data-bind='value: confirmChangePassword' class="form-control " placeholder="Confirm Password">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="button" data-bind='click: UpdatePassword'
+                                        class="btn btn-primary btn-block nextButton" value="Update Password">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group backToLogin">
+                                    <a href="" data-bind="click: showLoginPage"> <svg style="    margin: 6px 0 -6px;"
+                                            fill="currentColor" height="24" icon="" viewBox="0 0 24 24" width="24"
+                                            xmlns="http://www.w3.org/2000/svg" class="_ngcontent-lac-0">
+                                            <path d="M10 12l6-6-1-1-6.5 6.5-.5.5 7 7 1-1-6-6z" fill-rule="evenodd"
+                                                class="_ngcontent-lac-0"></path>
+                                        </svg> Back to login</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="form-signin item verifyPassword" style="display: none;">
+                <div class="panel panel-info ">
+
+                    <div class="panel-body">
+                        <label style="color: red" data-bind="text: errLoginMsg"></label>
+                        <form id="loginform" class="form-horizontal " role="form">
+                            <div class="col-md-12">
+                                <!--<label>Verify Password</label>-->
+                            </div>
+                            <div class="col-md-12">
+                                <label class="control-label">Enter OTP</label>
+                                <div class="form-group" data-bind="">
+                                    <input type="text" class="form-control" data-bind="value: mobileOtp,"
+                                        placeholder="OTP">
+                                    <span class="validationMessage" style="display: none;"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button id="btn-login" data-bind="click: verifyOTP"
+                                        class="btn btn-primary btn-block ">Verify
+                                        OTP</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var apiUrl = window.location.protocol + '//' + window.location.hostname + (window.location.port ? (':' + window.location.port) : '');
+        var subDomainCode, clientMachineIp, domainUrl;
+        var defaultSubDomains = ["cloud", "qa", "scaitsqa"];
+        var isProduction = true;
+        var hcdedDomainUrl = null;
+
+        function GetQueryStringParams(sParam) {
+            var sPageURL = window.location.search.substring(1);
+            var sURLVariables = sPageURL.split('&');
+            for (var i = 0; i < sURLVariables.length; i++) {
+                var sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0].toLowerCase() == sParam.toLowerCase()) {
+                    return sParameterName[1];
+                }
+            }
+        }
+
+        function CreateSalt() {
+            var newSalt = "";
+
+            do {
+                newSalt = Math.floor(Math.random() * Math.pow(10, 15)).toString();
+            } while (newSalt.length < 10)
+            return newSalt;
+        }
+        function Encrypt(msg) {
+            var salt = CreateSalt();
+
+            //var encrypted = CryptoJS.TripleDES.encrypt(msg, salt);
+            //var encryptedText = encrypted.toString();
+            //decrypt
+            //var decrypted = CryptoJS.TripleDES.decrypt(encryptedText,salt);
+            //var plaintext = decrypted.toString(CryptoJS.enc.Utf8);
+            var obj = {
+                encryptedText: msg,
+                salt: salt
+            }
+            return obj;
+        }
+
+        function setCookie(name, value, days, domain) {
+            eraseCookie(name, domain);
+
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + ";domain=" + domain + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+        function eraseCookie(name, domain) {
+            document.cookie = name + '=; Max-Age=-99999999;' + "domain=" + domain + ";";
+        }
+
+        
+        var getUserIP = function (callback) { //  onNewIp - your listener function for new IPs
+            //compatibility for firefox and chrome
+            var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+            var pc = new myPeerConnection({
+                iceServers: []
+            }),
+                noop = function () { },
+                localIPs = {},
+                ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
+                key;
+
+            function iterateIP(ip) {
+                if (!localIPs[ip]) callback(ip);
+                localIPs[ip] = true;
+            }
+
+            //create a bogus data channel
+            pc.createDataChannel("");
+
+            // create offer and set local description
+            pc.createOffer(function (sdp) {
+                sdp.sdp.split('\n').forEach(function (line) {
+                    if (line.indexOf('candidate') < 0) return;
+                    line.match(ipRegex).forEach(iterateIP);
+                });
+
+                pc.setLocalDescription(sdp, noop, noop);
+            }, noop);
+
+            //listen for candidate events
+            pc.onicecandidate = function (ice) {
+                if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
+                ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
+            };
+        }
+
+        getUserIP(function (ip) {
+            clientMachineIp = ip;
+        });
+
+
+
+        var ApiReg = {
+            Register: 10000,
+            ClientDetailByCode: 10001
+        };
+
+        var viewModel = function () {
+            var self = this;
+
+            var OnPremises = 0 ? 0 : false;
+            var APIRootUrl = '/';
+            var LoginOptionsFromConfig = '';
+
+            self.LoginOptionsTypes = {
+                NGLogin: 1,
+                SSOLogin: 2,
+                FormsLogin: 3,//anonymouse form login used to get the forms list
+                FormsImplicitLogin: 4,//when user id is set in forms,
+                FormsExplicitLogin: 5,//when user is forced to login in forms,
+                WindowsCurrentUser: 6,
+                WindowsOtherUser: 7
+            }
+            self.selectedLoginOption = ko.observable();
+            self.LoginOptions = ko.observableArray([{ Name: 'Cura', Val: 1 }]);
+
+
+            self.showLoading = ko.observable(false);
+            self.showLogin = ko.observable(true);
+            self.showForgotPasswd = ko.observable(false);
+            self.errLoginMsg = ko.observable('');
+            self.errRegisterMsg = ko.observable('');
+            self.activateMsg = ko.observable('Default Message');
+            self.activateMsgCss = ko.observable('');
+            self.showActivateMsg = ko.observable(false);
+            self.orgJoinsAvailable = ko.observable(false)
+
+            self.showUserNameField = ko.observable(true);
+            self.showPasswordField = ko.observable(false);
+            self.forgotType = ko.observable("email");
+            self.orgTermsUrlAvail = ko.observable(false);
+            self.orgPrivacyPolicyUrlAvail = ko.observable(false);
+
+            self.showMessage = function (errMsg, success) {
+                if (errMsg) {
+                    self.activateMsg(errMsg);
+                    self.activateMsgCss('alert alert-danger');
+                }
+                else {
+                    self.activateMsg(success);
+                    self.activateMsgCss('alert alert-success');
+                }
+            }
+
+            self.PopupMessage = ko.observable('');
+            self.ShowPopUp = ko.observable(false);
+            self.ShowOrHidePopupCSS = ko.observable('displayNone');
+            self.ShowPopUp.subscribe(function (val) {
+                if (val)
+                    self.ShowOrHidePopupCSS('displayInline');
+                else
+                    self.ShowOrHidePopupCSS('displayNone');
+            });
+            self.ShowPopMessage = function (msg) {
+                self.PopupMessage(msg);
+                self.ShowPopUp(true);
+            }
+            self.HidePopMessage = function () {
+                self.PopupMessage('');
+                self.ShowPopUp(false);
+            }
+
+            self.showPasswordSection = function () {
+                self.showUserNameField(false);
+                self.showPasswordField(true);
+            }
+
+            self.useAnotherAccount = function () {
+                self.showUserNameField(true);
+                self.showPasswordField(false);
+            }
+
+            self.hidePassword = ko.observable(true);
+
+            self.showHidePassword = function () {
+                self.hidePassword(!self.hidePassword());
+            }
+
+            //login fields start
+            self.enableSubDomainCode = ko.observable(false);
+            self.entitySubDomainCode = ko.observable();
+            self.IsPasswordRequired = ko.observable(true);
+            self.RouteNamesList = ko.observableArray();// [{Name:'A',Value:'1'},{Name:'B',Value:'2'}];
+            self.loginClientCode = ko.observable('');
+            self.loginRouteName = ko.observable();
+            self.loginUsername = ko.observable('');
+            self.loginPassword = ko.observable('');
+            self.loginClientCode.extend({
+                required: { message: 'Client code is required' }
+            });
+            self.loginUsername.extend({
+                required: { message: 'E-mail / Mobile Number is required', params: true }
+            });
+            self.loginPassword.extend({
+                required: { message: 'Password is required', params: true }
+            });
+            self.loginRouteName.extend({
+                required: { message: 'Route Name is required' }
+            });
+
+            self.forgotUsername = ko.observable();
+            self.forgotUsername.extend({
+                required: {
+                    message: "E-mail is required",
+                    onlyIf: function() {
+                        return self.forgotType() === "email";
+                    }
+                }
+            });
+
+            self.forgotUserMobileNumber = ko.observable();
+            self.forgotUserMobileNumber.extend({
+                required: {
+                    message: "Mobile Number is required",
+                    onlyIf: function() {
+                        return self.forgotType() === "mobile";
+                    }
+                }
+            })
+
+
+            self.loginerrors = ko.validation.group([self.loginUsername, self.loginPassword]);
+            self.passwordResetErrors = ko.validation.group([self.forgotUsername, self.forgotUserMobileNumber]);
+            self.verfiyEmailErrors = ko.validation.group([self.loginUsername]);
+
+
+            self.Login = function () {
+                self.passwordResetErrors.showAllMessages(false);
+                self.showActivateMsg(false);
+                if (self.loginerrors().length == 0) {
+
+                }
+                else {
+                    self.loginerrors.showAllMessages();
+                    return;
+                }
+
+                self.errLoginMsg('');
+                var encryptloginPassword = Encrypt(self.loginPassword());
+                self.showLoading(true);
+
+
+                let url = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : ''),
+                    apiUrlForLogin = apiUrl,
+                    hostName = window.location.hostname;
+
+                if (self.entitySubDomainCode()) {
+                    let arrAppUrl = window.location.hostname.split('.');
+
+                    if (arrAppUrl.length > 2 && arrAppUrl.length < 4) {
+                        url = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + "." + arrAppUrl[2] + (window.location.port ? ':' + window.location.port : '');
+                        apiUrlForLogin = apiUrl = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + "." + arrAppUrl[2] + ':' + (window.location.port ? window.location.port : "");
+                    }
+                    else if (arrAppUrl.length === 2) {
+                        if (arrAppUrl[1] === "localhost") {
+                            url = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + (window.location.port ? ':' + window.location.port : '');
+                            //apiUrlForLogin = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + ':1337';
+                            apiUrlForLogin = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + (window.location.port ? ':' + window.location.port : '');
+                        }
+                        else {
+                            url = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + "." + arrAppUrl[2] + (window.location.port ? ':' + window.location.port : '');
+                            apiUrlForLogin = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + "." + arrAppUrl[2] + (window.location.port ? ':' + window.location.port : "");
+                        }
+                    }
+                    else if (arrAppUrl.length === 1) {
+                        url = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[0] + (window.location.port ? ':' + window.location.port : '');
+                        apiUrlForLogin = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[0];// + ':1337';
+                    }
+                }
+
+                //ajax call
+                var loginParams = {
+                    'APIReg': 10002,
+                    'UserName': self.loginUsername(),
+                    'Password': encryptloginPassword.encryptedText,
+                    'SubdomainCode': GetQueryStringParams('logintype') ? GetQueryStringParams('logintype') : (self.clientProfile && self.clientProfile.config ? self.clientProfile.config.cbkey : self.entitySubDomainCode()),
+                    'Source': "Web",
+                    'DeviceId': window.location.hostname,
+                    'AuthenticationType': "Default",
+                    'IsSubDomain': self.entitySubDomainCode() ? true : false,
+                    'defaultSubDomain': self.entitySubDomainCode() ? null : window.location.hostname.split('.')[0],
+                    'domainUrl': hcdedDomainUrl ? hcdedDomainUrl : self.entitySubDomainCode() ? hostName.substr(hostName.indexOf(self.entitySubDomainCode()) + self.entitySubDomainCode().length + 1) : null,
+                    'authMechanismId': self.clientProfile && self.clientProfile.parentConfig ? self.clientProfile.parentConfig.authMechanismId : null,
+                    'userType': self.clientProfile && self.clientProfile.authConfig ? self.clientProfile.authConfig.userType : null
+                };
+                $.ajax({
+                    dataType: "json",
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    url: apiUrlForLogin + '/clientAuth', 		// Location of the service
+                    data: JSON.stringify(loginParams),
+                    success: function (response) {
+                        window.localStorage.removeItem('vwtoken');
+                        self.showLoading(false);
+                        if (response) {
+                            if (!response.error) {
+                                console.log(response);
+
+                                window.localStorage.setItem('vwtoken', response["token"]);
+                                window.localStorage.setItem('loginType', response.isSubDomain ? undefined : response.logintype);
+                                // window.localStorage.setItem('subDomain', loginParams.IsSubDomain ? self.entitySubDomainCode() : undefined);
+
+                                let arrAppUrl = window.location.hostname.split('.');
+                                // if (arrAppUrl.length > 1 && arrAppUrl.length < 4) {
+                                //     //setCookie('vwtoken', response["token"], 1, ("." + arrAppUrl[arrAppUrl.length - 2] + "." + arrAppUrl[arrAppUrl.length - 1]));
+                                //     setCookie('vwtoken', response["token"], 1, window.location.hostname);
+                                // }
+                                // else if (arrAppUrl.length > 4)
+                                //     setCookie('vwtoken', response["token"], 1, window.location.hostname);
+                                // else
+                                //     setCookie('vwtoken', response["token"], 1, "localhost");
+
+
+                                if (response["landingPage"] && response["landingPage"] !== "" && response["landingPage"] !== null && response["landingPage"] !== "null") {
+                                    window.location.href = url + "/indexdev.html" + response["landingPage"];
+                                }
+                                else
+                                    window.location.href = url + "/indexdev.html";
+                            }
+                            else {
+                                self.errLoginMsg(response.ErrorMessage);
+                            }
+                        }
+                    },
+                    error: function (d) {
+                        window.localStorage.removeItem('vwtoken');
+                        window.localStorage.removeItem('loginType');
+                        self.showLoading(false);
+                        console.log(d.responseJSON);
+                        if (d.responseJSON)
+                            self.errLoginMsg(d.responseJSON.ErrorMessage.message);
+                        else
+                            self.errLoginMsg("Server error occured while Login, please contact administrator");
+                    },
+                });
+            }
+
+            self.VerifyUserEmail = function (type) {
+
+                if(type == 'reset'){
+                    if (self.passwordResetErrors().length == 0) {
+
+                    }
+                    else {
+                        self.passwordResetErrors.showAllMessages();
+                        return;
+                    }
+                }
+                else{
+                    if (self.verfiyEmailErrors().length) {
+                        self.verfiyEmailErrors.showAllMessages();
+                        return;
+                    }
+                }
+                if (self.loginUsername().trim() || self.forgotUsername() || self.forgotUserMobileNumber()) {
+
+                    self.errLoginMsg("");
+                    let url = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : ''),
+                        apiUrlForLogin = apiUrl,
+                        hostName = window.location.hostname;
+
+                    if (self.entitySubDomainCode()) {
+                        let arrAppUrl = window.location.hostname.split('.');
+
+                        if (arrAppUrl.length > 2 && arrAppUrl.length < 4) {
+                            url = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + "." + arrAppUrl[2] + (window.location.port ? ':' + window.location.port : '');
+                            apiUrlForLogin = apiUrl = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + "." + arrAppUrl[2] + ':' + (window.location.port ? window.location.port : "");
+                        }
+                        else if (arrAppUrl.length === 2) {
+                            if (arrAppUrl[1] === "localhost") {
+                                url = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + (window.location.port ? ':' + window.location.port : '');
+                                //apiUrlForLogin = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + ':1337';
+                                apiUrlForLogin = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + (window.location.port ? ':' + window.location.port : '');
+                            }
+                            else {
+                                url = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + "." + arrAppUrl[2] + (window.location.port ? ':' + window.location.port : '');
+                                apiUrlForLogin = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[1] + "." + arrAppUrl[2] + (window.location.port ? ':' + window.location.port : "");
+                            }
+                        }
+                        else if (arrAppUrl.length === 1) {
+                            url = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[0] + (window.location.port ? ':' + window.location.port : '');
+                            apiUrlForLogin = window.location.protocol + '//' + self.entitySubDomainCode() + "." + arrAppUrl[0];// + ':1337';
+                        }
+                    }
+
+                    //ajax call
+                    var loginParams = {
+                        'APIReg': 10005,
+                        'UserName': self.loginUsername() ? self.loginUsername().trim() : (self.forgotUsername() ? self.forgotUsername().trim() : self.forgotUserMobileNumber().trim()),
+                        'SubdomainCode': GetQueryStringParams('logintype') ? GetQueryStringParams('logintype') : (self.clientProfile && self.clientProfile.config ? self.clientProfile.config.cbkey : self.entitySubDomainCode()),
+                        'NamespaceId': self.clientProfile && self.clientProfile.parentConfig.cbkey,
+                        'NamespaceName': self.clientProfile && self.clientProfile.parentConfig.name,
+                        'Source': "Web",
+                        'SourceId': window.location.protocol + '//' + hostName,
+                        'IsSubDomain': self.entitySubDomainCode() ? true : false,
+                        'domainUrl': hcdedDomainUrl ? hcdedDomainUrl : self.entitySubDomainCode() ? hostName.substr(hostName.indexOf(self.entitySubDomainCode()) + self.entitySubDomainCode().length + 1) : null,
+                        'authMechanismId': self.clientProfile && self.clientProfile.parentConfig ? self.clientProfile.parentConfig.authMechanismId : null,
+                        'defaultSubDomain': self.entitySubDomainCode() ? null : window.location.hostname.split('.')[0],
+                        userType: self.clientProfile && self.clientProfile.authConfig ? self.clientProfile.authConfig.userType : null
+                    };
+                    $.ajax({
+                        dataType: "json",
+                        type: 'POST',
+                        contentType: "application/json;charset=utf-8",
+                        url: apiUrlForLogin + '/clientAuth', 		// Location of the service
+                        data: JSON.stringify(loginParams),
+                        success: function (response) {
+                            window.localStorage.removeItem('vwtoken');
+                            self.showLoading(false);
+                            if (response) {
+                                if (!response.error) {
+                                    console.log(response);
+                                    self.activateMsg("");
+                                    self.showActivateMsg(false)                                    
+                                    
+                                    if(type == 'reset'){
+                                        self.PasswordReset();
+                                    }
+                                    else{
+                                        self.showPasswordSection();
+                                        $(".passwordControl").focus();
+                                    }
+                                }
+                                else {
+                                    self.showActivateMsg(true)
+                                    self.showMessage(response.ErrorMessage, null)
+                                    self.errLoginMsg(response.ErrorMessage);
+                                }
+                            }
+                        },
+                        error: function (d) {
+                            window.localStorage.removeItem('vwtoken');
+                            window.localStorage.removeItem('loginType');
+                            self.showLoading(false);
+                            console.log(d.responseJSON);
+                            if (d.responseJSON)
+                                self.errLoginMsg(d.responseJSON.ErrorMessage.message);
+                            else
+                                self.errLoginMsg("Server error occured while Login, please contact administrator");
+                        },
+                    });
+                }
+                else{
+                    //self.errLoginMsg("Please enter E-mail");
+                }
+            }
+
+            self.PasswordReset = function () {
+                self.loginerrors.showAllMessages(false);
+                self.showActivateMsg(false);
+                if (self.passwordResetErrors().length > 0) {
+                    self.passwordResetErrors.showAllMessages();
+                    return;
+                }
+
+                self.errLoginMsg('');
+                self.showLoading(true);
+                //ajax call
+                var data = {
+                    APIReg: 10008,
+                    email: self.forgotUsername(),
+                    mobileNumber: self.forgotUserMobileNumber(),
+                    hostName: window.location.hostname,
+                    subDomainCode: subDomainCode,
+                    domainUrl: domainUrl,
+                    forgotType: self.forgotType()
+                };
+                $.ajax({
+                    dataType: "json",
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    url: apiUrl + '/clientAuth',
+                    data: JSON.stringify(data),
+                    //data:data1,
+                    success: function (data) {
+                        self.showLoading(false);
+                        console.log(data);
+                        if (data) {
+                            if (data.success) {
+                                self.loginerrors.showAllMessages(false);
+                                self.showActivateMsg(true);
+                                self.showMessage(false, "OTP has sent to your E-mail and Mobile Number, please verify");
+                                self.showVerifyPasswd(true)
+                                self.showforgotFields(false)
+                                self.showOtpTimer();
+                            }
+                            else {
+                                self.showActivateMsg(true)
+                                self.showMessage(data.errors && data.errors[0], null)
+                                //self.errLoginMsg(data.errors && data.errors[0]);
+                            }
+                        }
+                    },
+                    error: function (d) {
+                        self.showLoading(false);
+                        //console.log(d.responseJSON);
+                        if (d.responseJSON)
+                            self.errLoginMsg(d.responseJSON.ErrorMessage.message);
+                        else
+                            self.errLoginMsg("Server error occured while reset password, please contact administrator");
+                    },
+                });
+
+            };
+            self.otpSent = ko.observable(false);
+            self.otpTimeExpired = ko.observable(false);
+            self.showOtpTimer = function(){
+                self.otpSent(true)
+                self.otpTimeExpired(false);
+                var seconds = new Date().getSeconds();
+                var countDownDate = new Date().setSeconds(seconds + 15);
+                countDownDate = new Date(countDownDate).getTime()
+
+                // Update the count down every 1 second
+                var x = setInterval(function() {
+
+                    // Get today's date and time
+                    var now = new Date().getTime();
+                        
+                    // Find the distance between now and the count down date
+                    var distance = countDownDate - now;
+                        
+                    // Time calculations for days, hours, minutes and seconds
+                    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        
+                    // Output the result in an element with id="demo"
+                    document.getElementById("forgotpasswordTimer").innerHTML = "00:" + (seconds < 10 ? "0" + seconds : seconds) + " s";
+                        
+                    // If the count down is over, write some text 
+                    if (distance < 0) {
+                        clearInterval(x);
+                        // document.getElementById("demo").innerHTML = "EXPIRED";
+                        self.otpTimeExpired(true);
+                        self.otpSent(false)
+                    }
+                }, 1000);
+            }; 
+
+            self.IsValidCss = function (field) {
+                if (!field.isValid() && field.isModified())
+                    return 'has-error';
+                return '';
+            };
+
+
+            self.ToggleShowLogin = function () {
+                $('div.pwdsection').show();
+                self.showLogin(!self.showLogin());
+                if (!self.showLogin()) {
+                    $(".ClientCompanyDetails, .LoginDetails").hide();
+                    $(".ClientBasicDetails").show();
+                    Cookies.remove('ProviderName');
+                    Cookies.remove('socialuserinfo');
+                }
+            }
+
+
+            //register fields start
+
+            var SalutationItem = function (name, value) {
+                this.Name = name;
+                this.NameValue = value;
+            };
+
+            self.availableSalutations = ko.observableArray([
+                new SalutationItem("Mr", "Mr"),
+                new SalutationItem("Ms", "Ms"),
+            ]);
+            self.selectedSalutation = ko.observable();
+
+            self.Salutation = ko.observable('');
+            self.fName = ko.observable('');
+            self.mName = ko.observable('');
+            self.lName = ko.observable('');
+            self.phone = ko.observable('');
+            self.email = ko.observable('')
+            self.clientcode = ko.observable('');
+            self.clientName = ko.observable('');
+            self.loginName = ko.observable('');
+            self.noofEmployees = ko.observable('');
+            self.headQuarterLocation = ko.observable('');
+            self.companyRevenue = ko.observable('');
+            self.country = ko.observable('');
+            self.password = ko.observable('');
+            self.confirmPassword = ko.observable('');
+            self.IsCuraAccount = ko.observable(true);
+            self.CountryList = ko.observableArray();
+
+            self.fName.extend({
+                required: { message: 'First Name is required', params: true }
+            });
+            self.lName.extend({
+                required: { message: 'Last Name is required', params: true }
+            });
+            self.email.extend({
+                email: { message: 'Not a Valid Email', params: true },
+                required: { message: 'Email is required', params: true }
+            });
+
+            self.phone.extend({
+                required: { message: 'Phone Number is required', params: true },
+                pattern: {
+                    message: 'Please enter valid Phone Number',
+                    params: /^[0-9]\d*$/
+                }
+            });
+
+            self.noofEmployees.extend({
+                pattern: {
+                    message: 'Please enter valid number',
+                    params: /^[0-9]\d*$/
+                }
+            });
+
+            self.companyRevenue.extend({
+                pattern: {
+                    message: 'Please enter valid revenue',
+                    params: /^\d{0,99}(?:\.\d{0,99}){0,1}$/
+                }
+            });
+
+            self.clientcode.extend({
+                required: { message: 'Company Code is required', params: true },
+                minLength: { message: 'Minimum length 3 is required', params: 3 },
+                pattern: {
+                    message: 'Company Code should contain only alphabets',
+                    params: /^[A-Za-z]{1,15}$/
+                }
+            });
+            self.clientName.extend({
+                required: { message: 'Company Name is required', params: true }
+            });
+            self.loginName.extend({
+                required: { message: 'Login Name is required', params: true },
+                minLength: { message: 'Minimum length 3 is required', params: 3 },
+                pattern: {
+                    message: 'Login Name should contain only alphanumeric characters',
+                    params: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))(([A-Za-z0-9_])|(@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))))$/
+                    ///^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/ --For valid Email
+                    ///^[A-Za-z0-9]{1,1}[A-Za-z0-9_]{2,20}$/ --For valid loginname
+                }
+            });
+            self.password.extend(
+                {
+                    required: { message: 'Password is required', params: true },
+                    pattern: {
+                        message: 'Password should contain at least one uppercase letter, one number and one special character',
+                        params: /^(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*#?&_^~,.;:"'])[A-Za-z\d$@$!%*#?&_^~,.;:"']{7,}$/
+                    }
+                }
+            );
+            
+            self.confirmPassword.extend({
+                required: { message: 'Confirm Password is required', params: true },
+                equal: { message: 'Confirm Password should match', params: self.password }
+            });
+
+            self.changePassword = ko.observable()
+            self.confirmChangePassword = ko.observable()
+            self.changePassword.extend(
+                {
+                    required: { message: 'Password is required', params: true },
+                    pattern: {
+                        message: 'Password should contain at least one uppercase letter, one number and one special character',
+                        params: /^(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*#?&_^~,.;:"'])[A-Za-z\d$@$!%*#?&_^~,.;:"']{7,}$/
+                    }
+                }
+            );
+            self.confirmChangePassword.extend({
+                required: { message: 'Confirm Password is required', params: true },
+                equal: { message: 'Confirm Password should match', params: self.changePassword }
+            });
+
+
+            //register fields end
+
+            self.detailsErrors = ko.validation.group([self.fName, self.lName, self.email, self.phone]);
+            self.clientErrors = ko.validation.group([self.clientName]);
+            self.signUpLoginErrors = ko.validation.group([self.clientcode, self.loginName, self.password, self.confirmPassword]);
+            self.IsValidCss = function (field) {
+                if (!field.isValid() && field.isModified())
+                    return 'has-error';
+                return '';
+            };
+
+            self.clearRegisterFields = function () {
+                
+            }
+
+            self.Register = function () {
+                
+            };
+
+            self.showSignUp = function () {
+
+                if (self.entitySubDomainCode() && self.clientProfile && self.clientProfile.authConfig && self.clientProfile.authConfig.organizationId) {
+                    if (self.clientProfile.authConfig.orgJoinOrgs && self.clientProfile.authConfig.orgJoinOrgs.length === 1) {
+                        window.location.href = window.location.protocol + '//' + window.location.hostname + "/signup/" + self.clientProfile.authConfig.orgJoinOrgs[0].orgJoinId;
+                    }
+                    else
+                        window.location.href = window.location.protocol + '//' + window.location.hostname + "/signup/orgItem/" + self.clientProfile.authConfig.organizationId;
+                }
+                else {
+                    window.location.href = window.location.protocol + '//' + window.location.hostname + "/signup/orglist";
+                }
+            }
+            //=========================================== Client Profile =============================================
+
+            self.clientLogo = ko.observable();
+            self.clientBackground = ko.observable("");
+            self.welcomeTag = ko.observable('');
+
+            self.welcomeTagColor = ko.observable();
+            self.clientImage = ko.observable();
+
+            self.FacebookEnabled = ko.observable(false);
+            self.LinkedInEnabled = ko.observable(false);
+            self.TwitterEnabled = ko.observable(false);
+            self.GoogleEnabled = ko.observable(false);
+
+            self.loginBtnLabel = ko.observable("Login");
+
+            self.userNameLabel = ko.observable("E-mail / Mobile Number");
+            self.clientProfile = null;
+
+            var hostName = window.location.hostname;
+
+            self.GetClientDetails = function (clientCode, subDomainCode, namespaceDomain) {
+                var data = {
+                    APIReg: ApiReg.ClientDetailByCode,
+                    userType: clientCode,
+                    subDomainCode: subDomainCode,
+                    domainUrl: hcdedDomainUrl ? hcdedDomainUrl : subDomainCode ? hostName.substr(hostName.indexOf(subDomainCode) + subDomainCode.length + 1) : null,
+                };
+
+                $.ajax({
+                    dataType: "json",
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    url: apiUrl + '/clientAuth', 		// Location of the service
+                    data: JSON.stringify(data),
+                    success: function (data) {
+                        self.showLoading(false);
+                        if (data) {
+                            if (data && (data.config || data.parentConfig)) {
+                                //console.log(JSON.stringify(data));   
+                                self.clientProfile = data;
+                                self.clientLogo("/renderImage/" + self.clientProfile.parentConfig.logo + "/100x100");
+                                self.welcomeTag(self.clientProfile.parentConfig.tagLine);
+                                self.welcomeTagColor(self.clientProfile.parentConfig.tagLineColor);
+                                self.clientImage("/renderImage/" + self.clientProfile.parentConfig.image + "/1600x1080x0x0");
+                                self.clientBackground('<source class="videoSource" src="' + self.clientProfile.parentConfig.videoUrl + '" type="video/mp4">');
+                                self.entitySubDomainCode(subDomainCode);
+
+                                self.orgJoinsAvailable(self.clientProfile.authConfig && self.clientProfile.authConfig.orgJoinOrgs && self.clientProfile.authConfig.orgJoinOrgs.length > 0)
+
+                                if (data.authConfig && data.authConfig.types && data.authConfig.types.Google) {
+                                    if (data.authConfig.types.Google.apiKey && data.authConfig.types.Google.clientId) {   // Google login Initializing and parameter settings
+                                        self.GoogleEnabled(true);
+                                        self.googleAppId = data.authConfig.types.Google.apiKey
+                                        self.googleClientId = data.authConfig.types.Google.clientId;
+
+                                        // Initializing Google
+                                        (function () {
+                                            var p = document.createElement('script')
+                                            p.type = 'text/javascript';
+                                            p.async = true;
+                                            p.src = 'https://apis.google.com/js/client.js?onload=onLoadFunction';       //enable google plus API
+                                            var s = document.getElementsByTagName('script')[0];
+                                            s.parentNode.insertBefore(p, s);
+                                        })()
+                                        window.onLoadFunction = function () {
+                                            gapi.client.setApiKey(self.googleApptId);
+                                            gapi.client.load('plus', 'v1', function () { })
+                                        }
+                                    }
+                                }
+                                if (data.authConfig && data.authConfig.types && data.authConfig.types.Facebook) {
+                                    if (data.authConfig.types.Facebook.appId) {                                              // Facebook login Initializing and parameter settings
+                                        self.FacebookEnabled(true);
+
+                                        self.facebookAppId = data.authConfig.types.Facebook.appId
+                                        // Initializing Facebook
+                                        window.fbAsyncInit = function () {
+                                            FB.init({
+                                                appId: self.facebookAppId,
+                                                // autoLogAppEvents: true,
+                                                xfbml: true,
+                                                version: 'v2.12',
+                                                status: true
+                                            });
+                                            FB.getLoginStatus(function (response) {
+                                                if (response.status == 'connected') {               // we are connected
+
+                                                } else if (response.status == 'not_authorized') {       // not auth
+                                                } else {                                            // we are not logged in to facebook
+
+                                                }
+
+                                            })
+                                        };
+                                        (function (d, s, id) {
+                                            var js, fjs = d.getElementsByTagName(s)[0];
+                                            if (d.getElementById(id)) { return; }
+                                            js = d.createElement(s); js.id = id;
+                                            js.src = "https://connect.facebook.net/en_US/sdk.js";
+                                            fjs.parentNode.insertBefore(js, fjs);
+                                        }(document, 'script', 'facebook-jssdk'));
+                                    }
+                                }
+                                if (data.authConfig && data.authConfig.types && data.authConfig.types.LinkedIn) {
+                                    if (data.authConfig.types.LinkedIn.clientId) {                                          //    LinkedIn login Initializing and parameter settings
+                                        self.LinkedInEnabled(true);
+                                        self.linkedInAppId = data.authConfig.types.LinkedIn.clientId;
+                                        self.linkedInAppSecret = data.authConfig.types.LinkedIn.clientsecret;
+                                    }
+                                }
+                                if (data.authConfig && data.authConfig.types && data.authConfig.types.Twitter) {
+                                    if (data.authConfig.types.Twitter.twitterApiId) {                               // Twitter login parameters settings
+                                        self.TwitterEnabled(true);
+                                        self.twitterPublickey = data.authConfig.types.Twitter.twitterApiId
+                                    }
+                                }
+
+                                if (data.parentConfig.favicon) {
+                                    let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                                    link.type = 'image/x-icon';
+                                    link.rel = 'shortcut icon';
+                                    link.href = "/renderImage/" + data.parentConfig.favicon + "/100x100";
+                                    document.getElementsByTagName('head')[0].appendChild(link);
+                                    sessionStorage.setItem("favicon", data.parentConfig.favicon);
+                                }
+                                else {
+                                    let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                                    link.type = 'image/x-icon';
+                                    link.rel = 'shortcut icon';
+                                    link.href = "./dist/icons/favIcon.png";
+                                    document.getElementsByTagName('head')[0].appendChild(link);
+                                    sessionStorage.setItem("favicon", data.parentConfig.favicon);
+                                }
+                                if (data.parentConfig.browserTitle) {
+                                    document.title = data.parentConfig.browserTitle;
+                                    sessionStorage.setItem("browserTitle", data.parentConfig.browserTitle);
+                                }
+
+                                if(data.parentConfig.orgTermsUrl){
+                                    self.orgTermsUrlAvail(true);
+                                }
+                                if(data.parentConfig.orgPrivacyPolicyUrl){
+                                    self.orgPrivacyPolicyUrlAvail(true);
+                                }
+                                //$(".videoSource").attr("src", self.clientProfile.background);
+
+                                //============= Enabling the Social Login =====================
+                                /*
+                                        var currLoginObj = $.grep(self.clientProfile.loginTypes, function (type) {
+                                            return type.loginURL == clientCode;
+                                        })
+                                        if (currLoginObj.length > 0) {
+                                            $.each(currLoginObj[0]["authenticationSchemes"], function (index, obj) {
+                                                if (obj.name == "Facebook") {
+                                                    self.FacebookEnabled(obj.isEnabled);
+                                                }
+                                                else if (obj.name == "LinkedIn") {
+                                                    self.LinkedInEnabled(obj.isEnabled);
+                                                }
+                                                else if (obj.name == "Twitter") {
+                                                    self.TwitterEnabled(obj.isEnabled);
+                                                }
+                                                else if (obj.name == "Google") {
+                                                    self.GoogleEnabled(obj.isEnabled);
+                                                }
+                                            })
+        
+        
+                                            if (currLoginObj[0]["selectedScheme"] == 1) {
+                                                self.userNameLabel("E-mail");
+                                            }
+                                            else if (currLoginObj[0]["selectedScheme"] == 5) {
+                                                self.userNameLabel("User Name");
+                                            }
+        
+                                            if (currLoginObj[0]["authType"] == "2") {
+                                                self.loginBtnLabel("Login as anonymous");
+                                                self.isAuthriozation(false);
+                                            }
+                                        }
+                                */
+                            }
+                            else {
+                                if (data.error) {
+                                    self.errLoginMsg(data.error);
+                                }
+                                else if (data.errno) {
+                                    self.errLoginMsg(data.address + " " + (data.errno == "ECONNREFUSED" ? "Connection refused" : data.errno));
+                                }
+                                if (data.errorCode == -1) {
+                                    let arrAppUrl = window.location.hostname.split('.');
+                                    // self.errLoginMsg(data.ErrorMessage);
+                                    // self.enableSubDomainCode(true);
+                                    if (isProduction)
+                                        window.location.href = window.location.protocol + "//cloud." + arrAppUrl[1] + (arrAppUrl[2] ? "." + arrAppUrl[2] : "") + (window.location.port ? ":" + window.location.port : "") + "/clientlogin.html?ErrorCode=-100";
+                                    else
+                                        window.location.href = window.location.protocol + "//qa." + arrAppUrl[1] + (arrAppUrl[2] ? "." + arrAppUrl[2] : "") + (window.location.port ? ":" + window.location.port : "") + "/clientlogin.html?ErrorCode=-100";
+                                }
+                            }
+                        }
+                    },
+                    error: function (d) {
+                        self.showLoading(false);
+                        console.log(d.responseJSON);
+                        if (d.responseJSON)
+                            self.errLoginMsg(d.responseJSON.ErrorMessage.message);
+                        else
+                            self.errLoginMsg("Server error occured while getting client details, please contact administrator");
+                    },
+                });
+            }
+
+
+            $(document).ready(function () {
+                if (GetQueryStringParams('SessionExpired')) {
+                    self.showMessage('Session Expired. Please Login', undefined);
+                    self.showActivateMsg(true);
+                    return;
+                }
+                var userActiavted = GetQueryStringParams('Activate');
+                if (userActiavted) {
+                    if (userActiavted > 0)
+                        self.showMessage(undefined, 'success activated');
+                    else
+                        self.showMessage('Activation failed', undefined);
+                    self.showActivateMsg(true);
+                }
+                else {
+                    self.showActivateMsg(false);
+                }
+                var signup = GetQueryStringParams('signup');
+                if (signup != undefined) {
+                    self.showLogin(false);
+                }
+                var email = GetQueryStringParams('email');
+                if (email != undefined) {
+                    self.email(email);
+                }
+                var errorCode = GetQueryStringParams('ErrorCode');
+                if (errorCode != undefined) {
+                    if (errorCode == '-100') {
+                        self.showMessage('An internal error has occured', undefined);
+                        self.showActivateMsg(true);
+                    }
+                    else if (errorCode == '-101') {
+                        self.showMessage('Forms not configured. Please contact Cura Support', undefined);
+                        self.showActivateMsg(true);
+                    }
+                }
+                // alert(Cookies.get('ProviderName'));
+                if (window.location != null && window.location.href != null && window.location.href.indexOf('?code=') != -1 && Cookies.get('ProviderName') != null)//&& Cookies.get('ProviderName')!=undefined)
+                {
+                    self.SocialLoginResponse();
+                    //Cookies.remove('ProviderName');
+                }
+
+                $(".ClientCompanyDetails, .LoginDetails").hide();
+                //window.localStorage.removeItem('vwtoken');
+
+
+                var clientCode = GetQueryStringParams('logintype');
+                let namespaceDomain;
+
+                let appUrl = window.location.protocol + '//' + window.location.hostname;
+                let arrAppUrl = window.location.hostname.split('.');
+
+
+                if (arrAppUrl.length > 2 && arrAppUrl.length < 4) {
+                    apiUrl = window.location.protocol + '//' + arrAppUrl[0] + "." + arrAppUrl[1] + "." + arrAppUrl[2] + ':' + (window.location.port ? window.location.port : "");
+                    subDomainCode = arrAppUrl[0];
+                    appUrl = window.location.protocol + '//' + arrAppUrl[0] + "." + arrAppUrl[1] + "." + arrAppUrl[2];
+                    domainUrl = arrAppUrl[1] + "." + arrAppUrl[2];
+                }
+                else if (arrAppUrl.length === 2) {
+                    if (arrAppUrl[1] == "localhost") {
+                        apiUrl = window.location.protocol + '//' + arrAppUrl[0] + "." + arrAppUrl[1] + (window.location.port ? ":" + window.location.port : '');
+                        subDomainCode = arrAppUrl[0];
+                        appUrl = window.location.protocol + '//' + arrAppUrl[1]  + (window.location.port ? ":" + window.location.port : '');
+                        domainUrl = arrAppUrl[1];
+                        if(window.location.port){
+                            hcdedDomainUrl = "voltusone.com";
+                        }
+                    }
+                    // else {
+                    //     apiUrl = window.location.protocol + '//' + arrAppUrl[0] + "." + arrAppUrl[1] + "." + arrAppUrl[2] + (window.location.port ? ':' + window.location.port : "");
+                    //     appUrl = window.location.protocol + '//' + arrAppUrl[0] + "." + arrAppUrl[1] + "." + arrAppUrl[2];
+                    // }
+                }
+                else if (arrAppUrl.length === 1) {
+                    apiUrl = window.location.protocol + '//' + window.location.hostname;// + ':1337';
+                    appUrl = window.location.protocol + '//' + arrAppUrl[0];
+                    domainUrl = arrAppUrl[0];
+                }
+
+                if (subDomainCode) {
+                    if (defaultSubDomains.indexOf(subDomainCode) !== -1) {
+                        self.enableSubDomainCode(true);
+                        self.orgJoinsAvailable(true);
+                        
+                        let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                        link.type = 'image/x-icon';
+                        link.rel = 'shortcut icon';
+                        link.href = "./dist/icons/favIcon.png";
+                        document.getElementsByTagName('head')[0].appendChild(link);
+
+                        // if(data && data.parentConfig.favicon)
+                        //     sessionStorage.setItem("favicon", data.parentConfig.favicon);
+                    }
+                    else {
+                        self.enableSubDomainCode(false);
+                        self.GetClientDetails(null, subDomainCode);
+                    }
+                }
+                else {
+                    self.enableSubDomainCode(true);
+                }
+
+
+                if (clientCode) {
+                    console.log("client code =>", clientCode);
+                    self.enableSubDomainCode(false);
+                    self.GetClientDetails(clientCode, null);
+                }
+
+
+            });
+
+
+            self.onGoogleLogin = function () {
+                // Cookies.set('ProviderName', 'Google');
+                // self.SocialLoginRequest();
+                var params = {
+                    'clientid': self.googleClientId,
+                    'cookiepolicy': 'single_host_origin',
+                    'callback': function (result) {
+                        if (result['status']['signed_in']) {
+                            var request = gapi.client.plus.people.get({
+                                'userId': 'me'
+                            })
+                            request.execute(function (response) {
+                                // console.log(response.result.emails[0].value)
+                                self.socialLoginEmail = response.emails[0].value
+                                if (self.socialLoginEmail) {
+                                    self.SocialLoginsRequest('Google')
+                                }
+                                else {
+                                    self.errLoginMsg("Login failed");
+                                }
+                            })
+                        }
+                    },
+                    'approvalprompt': 'force',
+                    'scope': 'https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read'
+                }
+                gapi.auth.signIn(params)
+            };
+
+            self.onFacebookLogin = function () {
+                // Cookies.set('ProviderName', 'Facebook');
+                // self.SocialLoginRequest();
+                FB.login(function (response) {
+                    if (response.authResponse) {
+                        FB.api('/me', 'GET', { fields: 'email,first_name,name,id,picture' }, function (response) {
+                            // console.log(response.email)
+                            self.socialLoginEmail = response.email
+                            if (self.socialLoginEmail) {
+                                self.SocialLoginsRequest('Facebook')
+                            }
+                            else {
+                                self.errLoginMsg("Login failed");
+                            }
+                        })
+                    } else {
+                        ///error
+                    }
+                }, {
+                        scope: 'email',
+                        return_scopes: true
+                    })
+            };
+
+            self.onLinkedInLogin = function () {
+
+                function receiveMessage(event) {
+                    console.log(event);
+                    if (event.origin === window.location.origin) {
+                        let data = event.data;
+                        fetch("/oauth/v2/accessToken", {
+                            headers: {
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                            method: "POST",
+                            body: JSON.stringify({
+                                grant_type: 'authorization_code',
+                                code: data.code,
+                                redirect_uri: window.location.protocol + "//" + window.location.hostname + "/linkedInPage.html",
+                                client_id: self.linkedInAppId,//"8158fvz9xxo9qy",
+                                client_secret: self.linkedInAppSecret, //"ITgeH9tmIAVUBJzl",
+                                scope: "r_emailaddress r_liteprofile r_primarycontact"
+                            })
+                        })
+                            .then(response => response.json())
+                            .then(function (profile) {
+                                // console.log(profile);                            
+                                self.socialLoginEmail = profile.email;
+                                self.SocialLoginsRequest('LinkedIn');
+                            });
+                    }
+                    else {
+                        console.log("received authentication from another page ", event.origin)
+                    }
+                }
+                window.removeEventListener('message', receiveMessage, false);
+                window.addEventListener("message", receiveMessage, false);
+
+                window.open("https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" + self.linkedInAppId + "&redirect_uri=" + window.location.protocol + "//" + window.location.hostname + "/linkedInPage.html&scope=r_liteprofile%20r_emailaddress&state=987654321", '_blank', 'width=600,height=600');
+
+                // OAuth.initialize(self.linkedInAppId)
+                // OAuth.popup('linkedin2')
+                //     .done(function (result) {
+                //         result.me()
+                //             .done(function (response) {
+                //                 // console.log(response)
+                //                 // self.socialLoginEmail = response.email
+                //                 // if (self.socialLoginEmail) {
+
+                //                 //     self.SocialLoginsRequest('LinkedIn')
+                //                 // }
+                //                 // else {
+                //                 //     self.errLoginMsg("Login failed");
+                //                 // }
+
+
+                //             })
+                //             .fail(function (err) {
+                //                 //handle error with err
+                //             });
+                //             result.get('/v2/me/').
+                //             then(data => {
+                //                 console.log('self data:', data);
+                //                 self.socialLoginEmail = data.id;
+                //                 self.SocialLoginsRequest('LinkedIn');
+                //             })
+
+                //     })
+                //     .fail(function (err) {
+                //         //handle error with err
+                //         self.errLoginMsg("Please Contact your admin");
+                //     });
+                // $.ajax({
+                //     dataType: "json",
+                //     type: 'GET',
+                //     contentType: "application/json;charset=utf-8",
+                //     url: 'https://www.linkedin.com/oauth/v2/authorization',
+                //     data: {
+                //         response_type: "CODE",
+                //         client_id: self.linkedInAppId,
+                //         redirect_uri: "",
+                //         state:"DCEeFWf45A53sdfKef424",
+                //         scope: "r_liteprofile%20r_emailaddress%20w_member_social"
+                //     },
+                //     success: function (response) {
+                //         console.log(response);                       
+
+                //     },
+                //     error: function (d) {
+                //         console.log(d);
+                //     },
+                // });
+
+            };
+            self.onTwitterLogin = function () {
+                OAuth.initialize(self.twitterPublickey)
+                OAuth.popup('twitter')
+                    .done(function (result) {
+                        result.me()
+                            .done(function (response) {
+                                // console.log(response)
+                                self.socialLoginEmail = response.email
+                                if (self.socialLoginEmail) {
+                                    self.SocialLoginsRequest('Twitter')
+                                }
+                                else {
+                                    self.errLoginMsg("Login failed");
+                                }
+                            })
+                            .fail(function (err) {
+                                //handle error with err
+                            });
+                    })
+                    .fail(function (err) {
+                        //handle error with err
+                        self.errLoginMsg("Please Contact your admin");
+                    });
+            }
+            self.onLinkedInLogin26 = function () {
+                OAuth.initialize('ST6kA417jg9j4VaSKwmd8oav8Jk')
+                OAuth.popup('linkedin')
+                    .done(function (result) {
+                        result.me()
+                            .done(function (response) {
+                                // console.log(response)
+                                self.socialLoginEmail = response.email
+                                if (self.socialLoginEmail) {
+                                    self.SocialLoginsRequest('Twitter')
+                                }
+                                else {
+                                    self.errLoginMsg("Login failed");
+                                }
+                            })
+                            .fail(function (err) {
+                                //handle error with err
+                            });
+                    })
+                    .fail(function (err) {
+                        //handle error with err
+                        self.errLoginMsg("Please Contact your admin");
+                    });
+            }
+
+            // Handle an error response from the API call
+            self.onError = function (error) {
+                console.log(error);
+            }
+            self.Gmail = function () {
+                Cookies.set('ProviderName', 'Google');
+                self.SocialLoginRequest();
+            };
+            self.Facebook = function () {
+                Cookies.set('ProviderName', 'Facebook');
+                self.SocialLoginRequest();
+            };
+            self.LinkedIn = function () {
+                Cookies.set('ProviderName', 'LinkedIn');
+                self.SocialLoginRequest();
+            };
+            self.showClientDetails = function () {
+                self.showActivateMsg(false);
+                if (self.detailsErrors().length == 0) {
+                    $(".ClientCompanyDetails").show();
+                    $(".ClientBasicDetails, .LoginDetails").hide();
+                    $(".widgetStep1").addClass("active done");
+                    $(".widgetStep2").addClass("active");
+                }
+                else {
+                    self.detailsErrors.showAllMessages();
+                    return;
+                }
+
+            }
+
+            self.showBasicDetails = function () {
+                $(".ClientCompanyDetails, .LoginDetails").hide();
+                $(".ClientBasicDetails").show();
+            }
+
+            self.showLoginDetails = function () {
+                if (self.clientErrors().length == 0 && self.detailsErrors().length == 0) {
+                    $(".ClientCompanyDetails, .ClientBasicDetails").hide();
+                    $(".LoginDetails").show();
+                    $(".widgetStep2").addClass("active done");
+                    $(".widgetStep3").addClass("active");
+                }
+                else {
+                    self.clientErrors.showAllMessages();
+                    return;
+                }
+            }
+
+            self.forgotReset = function () {
+                self.showLogin(false);
+                self.loginUsername("");
+                self.showForgotPasswd(true);
+                self.showforgotFields(true)
+                self.showVerifyPasswd(false)
+                self.errLoginMsg("");
+                self.showActivateMsg(false);
+                if ($(".usernameControl").val()) {
+                    $(".usernameControl").addClass("focused");
+                    $(".floatUserNameLabel").addClass("float");
+                }
+            }
+
+            self.SocialLoginsRequest = function (loginType) {
+                //ajax call
+                var data1 = {
+                    'APIReg': 10009,
+                    'email': self.socialLoginEmail,
+                    'socialLoginType': loginType,
+                    // 'ClientCode': GetQueryStringParams('logintype') ? GetQueryStringParams('logintype') : (self.clientProfile && self.clientProfile.config.cbkey ? self.clientProfile.parentConfig.cbkey : self.entitySubDomainCode()),
+                    // 'ClientCode': GetQueryStringParams('logintype') ? GetQueryStringParams('logintype') : (self.clientProfile && self.clientProfile.config ? self.clientProfile.config.cbkey : self.entitySubDomainCode()),
+                    // 'NamespaceId': self.clientProfile && self.clientProfile.parentConfig.cbkey,
+                    // 'NamespaceName': self.clientProfile && self.clientProfile.parentConfig.name,
+                    'subDomainCode': self.entitySubDomainCode(),
+                    'Source': "Web",
+                    'DeviceId': window.location.hostname,
+                    'AuthenticationType': "Social",
+                    'AuthenticationMechanism': loginType,                    
+                    'IsSubDomain': self.entitySubDomainCode() ? true : false,
+                    'domainUrl': self.entitySubDomainCode() ? hostName.substr(hostName.indexOf(self.entitySubDomainCode()) + self.entitySubDomainCode().length + 1) : null,
+                    'authMechanismId': self.clientProfile && self.clientProfile.parentConfig ? self.clientProfile.parentConfig.authMechanismId : null
+
+                };
+                $.ajax({
+                    dataType: "json",
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    url: apiUrl + '/clientAuth',
+                    data: JSON.stringify(data1),
+                    success: function (response) {
+                        window.localStorage.removeItem('vwtoken');
+                        self.showLoading(false);
+                        if (response) {
+                            if (!response.error) {
+                                console.log(response);
+                                window.localStorage.setItem('vwtoken', response["token"]);
+                                window.localStorage.setItem('loginType', response.isSubDomain ? undefined : response.logintype);
+
+                                if (response["landingPage"] !== "" && response["landingPage"] !== null && response["landingPage"] !== "null") {
+                                    window.location.href = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + "/indexdev.html" + response["landingPage"];
+                                }
+                                else
+                                    window.location.href = window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + "/indexdev.html";
+                            }
+                            else {
+                                self.errLoginMsg(response.ErrorMessage);
+                            }
+                        }
+                    },
+                    error: function (d) {
+                        window.localStorage.removeItem('vwtoken');
+                        window.localStorage.removeItem('loginType');
+                        self.showLoading(false);
+                        console.log(d.responseJSON);
+                        if (d.responseJSON)
+                            self.errLoginMsg(d.responseJSON.ErrorMessage.message);
+                        else
+                            self.errLoginMsg("Server error occured while Login, please contact administrator");
+                    },
+                });
+            }
+
+
+            self.SocialLoginRequest = function () {
+
+                var objparam = new Object();
+                objparam.RegistrationNumber = 13000;
+                objparam.Params = { ProviderName: Cookies.get('ProviderName') };
+
+                $("#response").text("Posting Data...");
+                self.showLoading(true);
+                $.ajax({
+                    url: 'Api/nextgen',
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    dataType: 'json',
+                    data: JSON.stringify(objparam),
+                    success: function (data) {
+                        self.showLoading(false);
+                        if (data && typeof data.ErrorCode !== "undefined" && data.ErrorCode == 0 && data.ObjectList != null && data.ObjectList.length > 0) {
+                            window.location.href = data.ObjectList[0];
+                        }
+                        else {
+                        }
+                    },
+                    error: function (x, y, z) {
+
+                    }
+                });
+            };
+
+            self.SocialLoginResponse = function () {
+                var qstr = window.location.href.split('?');
+                var objparam = new Object();
+                objparam.RegistrationNumber = 13001;
+                objparam.Params = { ProviderName: Cookies.get('ProviderName'), QueryString: qstr[1] };
+
+                $("#response").text("Posting Data...");
+                Encrypt(self.password());
+                self.showLoading(true);
+                $.ajax({
+                    url: 'Api/nextgen',
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    dataType: 'json',
+                    data: JSON.stringify(objparam),
+                    success: function (data) {
+                        self.showLoading(false);
+                        if (data && typeof data.ErrorCode !== "undefined" && data.ErrorCode == 0 && data.ObjectList != null && data.ObjectList.length > 0) {
+                            var response = data.ObjectList[0];
+                            Cookies.set('socialuserinfo', response);
+                            if (response.Email != null && response.Email != undefined) {
+                                self.SocialUserLogin(response);
+                            }
+                        }
+                        else {
+
+                        }
+                    },
+                    error: function (x, y, z) {
+                        self.showLoading(false);
+                        console.log(x.responseJSON);
+                    }
+                });
+            };
+
+
+            self.SocialUserLogin = function (response) {
+                self.showLoading(true);
+                var data1 = {
+                    'UserName': response.Email,
+                    'ProviderName': response.ProviderName
+                };
+                $.ajax({
+                    dataType: "json",
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    url: APIRootUrl + 'SocialLogin',
+                    data: JSON.stringify(data1),
+                    //data:data1,
+                    success: function (data) {
+                        self.showLoading(false);
+                        console.log('SocialUserLogin success:' + JSON.stringify(data));
+                        if (data) {
+                            if (data.ErrorMessage === "") {
+                                window.location.href = data.RedirectUrl;
+                            }
+                            else {
+                                self.fillClientDetail(response);
+                            }
+                        }
+                    },
+                    error: function (d) {
+                        self.showLoading(false);
+                        console.log(d.responseJSON);
+                        self.fillClientDetail(response);
+                    },
+                });
+            };
+
+            self.GenerateKey = function () {
+                var text = "";
+                var l1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                var l2 = "0123456789";
+                var l3 = "$@";
+                var l4 = "abcdefghijklmnopqrstuvwxyz";
+                var l5 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$@";
+                ///^(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*#?&_^~,.;:"'])[A-Za-z\d$@$!%*#?&_^~,.;:"']{7,}$/
+                text += l1.charAt(Math.floor(Math.random() * l1.length));
+                text += l2.charAt(Math.floor(Math.random() * l2.length));
+                text += l3.charAt(Math.floor(Math.random() * l3.length));
+                text += l4.charAt(Math.floor(Math.random() * l4.length));
+                text += l5.charAt(Math.floor(Math.random() * l5.length));
+                text += l5.charAt(Math.floor(Math.random() * l5.length));
+                text += l4.charAt(Math.floor(Math.random() * l4.length));
+
+                return text;
+            };
+
+            self.fillClientDetail = function (response) {
+                self.showLogin(false);
+                $('div.pwdsection').hide();
+                self.fName(response.FirstName || '');
+                self.mName(response.MiddleName || '');
+                self.lName(response.LastName || '');
+                self.phone(response.Phone || '');
+                self.email(response.Email || '');
+                self.loginName(response.Email || '');
+                var pwd = self.GenerateKey();
+                self.password(pwd);
+                self.confirmPassword(pwd);
+                if (response.Email != null && response.Email != undefined)
+                    self.IsCuraAccount(false);
+            };
+
+            function showLogin() {
+                $('#login').show();
+                $('#register').hide();
+                self.showLogin(true);
+                self.showForgotPasswd(false);
+                self.forgotUsername("");
+                self.forgotUserMobileNumber("");
+            }
+
+            self.showLoginPage = function () {
+                self.showLogin(true);
+                self.showForgotPasswd(false);
+                self.errLoginMsg("");
+                self.loginUsername("");
+                self.useAnotherAccount();
+            }
+
+            self.showRegister = function () {
+                $('#login').hide();
+                $('#register').show();
+                self.showLogin(false);
+                self.showForgotPasswd(false);
+            }
+
+
+            //================= START - Send/Verify OTP ================
+
+            self.mobileNumber = ko.observable("");
+
+            self.mobileNumber.extend({
+                pattern: {
+                    message: 'Please enter valid number',
+                    params: /^[0-9]\d*$/
+                }
+            });
+
+            self.forgotPasswordErrors = ko.validation.group([self.mobileNumber]);
+            self.showforgotFields = ko.observable(false);
+            self.GetOTP = function () {
+                if (self.forgotPasswordErrors().length == 0) {
+
+                }
+                else {
+                    self.forgotPasswordErrors.showAllMessages();
+                    return;
+                }
+                self.errRegisterMsg('');
+
+
+                self.showVerifyPasswd(true);
+                self.showForgotPasswd(false);
+            }
+
+            self.showVerifyPasswd = ko.observable(false);
+            self.mobileOtp = ko.observable("");
+
+            self.verifyOTP = function () {
+                if (self.mobileOtp().trim()) {
+                    var data = {
+                        APIReg: 10006,
+                        otp: self.mobileOtp(),
+                        mobileNumber: self.forgotUserMobileNumber(),
+                        email: self.forgotUsername(),
+                        forgotType: self.forgotType(),
+                        hostName: window.location.hostname,
+                        subDomainCode: subDomainCode,
+                        domainUrl: domainUrl,
+                    };
+                    $.ajax({
+                        dataType: "json",
+                        type: 'POST',
+                        contentType: "application/json;charset=utf-8",
+                        url: apiUrl + '/clientAuth',
+                        data: JSON.stringify(data),
+                        //data:data1,
+                        success: function (data) {
+                            self.showLoading(false);
+                            console.log(data);
+                            if (data) {
+                                if (data.success) {
+                                    self.showMessage(undefined, "OTP verified, please update password");
+                                    self.showActivateMsg(true);
+                                    self.loginerrors.showAllMessages(false);
+                                    self.showChangePasswd(true);
+                                    self.showVerifyPasswd(false)
+                                    self.showforgotFields(false)
+                                    // window.location.href = window.location.protocol + '//' + window.location.hostname + "/resetPassword.html?authId=" + (self.forgotType() == "email" ? self.forgotUsername(): self.forgotUserMobileNumber());
+                                }
+                                else {
+                                    self.errLoginMsg(data.ErrorMessage);
+                                }
+                            }
+                        },
+                        error: function (d) {
+                            self.showLoading(false);
+                            //console.log(d.responseJSON);
+                            if (d.responseJSON)
+                                self.errLoginMsg(d.responseJSON.ErrorMessage.message);
+                            else
+                                self.errLoginMsg("Server error occured while verifing OTP, please contact administrator");
+                        },
+                    });
+                }
+                else{
+                    console.log("otp not entered")
+                }
+            };
+
+            //================= END - Send/Verify OTP ================
+
+            self.changePasswordErrors = ko.validation.group([self.changePassword, self.confirmChangePassword]);
+            self.showChangePasswd = ko.observable(false);
+            self.UpdatePassword = function(){
+                if(self.changePasswordErrors().length > 0){
+                    return;                    
+                }
+                var data = {
+                    APIReg: 10007,
+                    Password: self.changePassword(),
+                    mobileNumber: self.forgotUserMobileNumber(),
+                    email: self.forgotUsername(),
+                    forgotType: self.forgotType(),
+                    hostName: window.location.hostname,
+                    subDomainCode: subDomainCode,
+                    domainUrl: domainUrl,
+                    otp: "",
+                };
+                $.ajax({
+                    dataType: "json",
+                    type: 'POST',
+                    contentType: "application/json;charset=utf-8",
+                    url: apiUrl + '/clientAuth',
+                    data: JSON.stringify(data),
+                    //data:data1,
+                    success: function (data) {
+                        self.showLoading(false);
+                        console.log(data);
+                        if (data) {
+                            if (data.success) {
+                                self.showMessage(undefined, data.message);
+                                self.showActivateMsg(true);
+                                self.loginerrors.showAllMessages(false);
+                                self.showChangePasswd(false);
+                                self.showVerifyPasswd(false)
+                                self.showforgotFields(false)
+                                showLogin();
+                            }
+                            else {
+                                self.errLoginMsg(data.ErrorMessage);
+                            }
+                        }
+                    },
+                    error: function (d) {
+                        self.showLoading(false);
+                        //console.log(d.responseJSON);
+                        if (d.responseJSON)
+                            self.errLoginMsg(d.responseJSON.ErrorMessage.message);
+                        else
+                            self.errLoginMsg("Server error occured while verifing OTP, please contact administrator");
+                    },
+                });
+            }
+
+        };
+        ko.applyBindings(viewModel);
+
+
+
+        $(document).ready(function () {
+            $(".usernameControl").focus();
+            if ($(".usernameControl").val()) {
+                $(".usernameControl").addClass("focused");
+                $(".floatUserNameLabel").addClass("float");
+            }
+            if (GetQueryStringParams('SessionExpired')) {
+                self.showMessage('Session Expired. Please Login', undefined);
+                self.showActivateMsg(true);
+                return;
+            }
+            var userActiavted = GetQueryStringParams('Activate');
+            if (userActiavted) {
+                if (userActiavted > 0)
+                    self.showMessage(undefined, 'success activated');
+                else
+                    self.showMessage('Activation failed', undefined);
+                self.showActivateMsg(true);
+            }
+            else {
+                self.showActivateMsg(false);
+            }
+            var signup = GetQueryStringParams('signup');
+            if (signup != undefined) {
+                self.showLogin(false);
+            }
+            var email = GetQueryStringParams('email');
+            if (email != undefined) {
+                self.email(email);
+            }
+            var errorCode = GetQueryStringParams('ErrorCode');
+            if (errorCode != undefined) {
+                if (errorCode == '-100') {
+                    self.errLoginMsg('Sub domain is not configured');
+                    self.enableSubDomainCode(true);
+                }
+                else if (errorCode == '-101') {
+                    self.showMessage('Forms not configured. Please contact Cura Support', undefined);
+                    self.showActivateMsg(true);
+                }
+            }
+
+
+            // alert(Cookies.get('ProviderName'));
+            if (window.location != null && window.location.href != null && window.location.href.indexOf('?code=') != -1 && Cookies.get('ProviderName') != null)//&& Cookies.get('ProviderName')!=undefined)
+            {
+                self.SocialLoginResponse();
+                //Cookies.remove('ProviderName');
+            }
+
+            $(".ClientCompanyDetails, .LoginDetails").hide();
+            eraseCookie("vwtoken");
+
+            $(".floatUserNameLabel").click(function () {
+                $(".usernameControl").addClass("focused");
+                $(".usernameControl").focus();
+                $(this).addClass("float");
+            });
+
+            $(".usernameControl").keypress(function(){
+                $(".usernameControl").addClass("focused");
+                $(".usernameControl").focus();
+                $(this).addClass("float");
+            })
+
+            $(".usernameControl").focus(function () {
+                $(".usernameControl").addClass("focused");
+                $(".floatUserNameLabel").addClass("float");
+            });
+
+            $(".floatPasswordLabel").click(function () {
+                $(".passwordControl").addClass("focused");
+                $(".passwordControl").focus();
+                $(this).addClass("float");
+            });
+            $(".passwordControl").focus(function () {
+                $(".passwordControl").addClass("focused");
+                $(".floatPasswordLabel").addClass("float");
+            });
+            $(".usernameControl").blur(function () {
+                if ($(this).val() != "") {
+
+                } else {
+                    $(this).removeClass("focused");
+                    $(".floatUserNameLabel").removeClass("float")
+                }
+            });
+            $(".passwordControl").blur(function () {
+                if ($(this).val() != "") {
+
+                } else {
+                    $(this).removeClass("focused");
+                    $(".floatPasswordLabel").removeClass("float")
+                }
+            })
+
+        });
+
+    </script>
+</body>
+
+</html>
