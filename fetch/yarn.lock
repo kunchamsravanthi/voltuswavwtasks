@@ -3525,7 +3525,7 @@ functional-red-black-tree@^1.0.1:
 
 fusion-cli@^2.2.0:
   version "2.2.0"
-  resolved "https://registry.npmjs.org/fusion-cli/-/fusion-cli-2.2.0.tgz#07ccfea4fc90914615285670be5a3518bb135e02"
+  resolved "https://registry.yarnpkg.com/fusion-cli/-/fusion-cli-2.2.0.tgz#07ccfea4fc90914615285670be5a3518bb135e02"
   integrity sha512-j4TaJ9Li7yDMgfBINx17EyvbecxznXDpU8ofKGyb9VgcQ0EQ6RU1LrHzNFjv1Ly0EVwdPqwDWrB7+UgxvSfaUA==
   dependencies:
     "@babel/core" "^7.4.4"
